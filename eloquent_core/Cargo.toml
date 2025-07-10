@@ -10,6 +10,11 @@ documentation = "https://docs.rs/eloquent"
 [dependencies]
 sqlformat = "0.3.0"
 log = "0.4"
+chrono = { version = "0.4.41", optional = true }
 
 [lib]
 doctest = true
+
+[features]
+default = []
+with-chrono = ["dep:chrono"]

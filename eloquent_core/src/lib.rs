@@ -16,7 +16,10 @@ mod queries;
 mod query_builder;
 mod subqueries;
 mod subquery_builder;
+mod to_sql;
 mod validator;
+
+pub use to_sql::*;
 
 /// The main builder struct that holds all the query building information.
 pub struct QueryBuilder {
@@ -245,12 +248,6 @@ impl ToSql for String {
     }
 }
 
-impl ToSql for &String {
-    fn to_sql(&self) -> Result<String, EloquentError> {
-        Ok(format!("'{}'", self.replace('\'', "''")))
-    }
-}
-
 impl ToSql for i32 {
     fn to_sql(&self) -> Result<String, EloquentError> {
         Ok(self.to_string())
@@ -306,6 +303,16 @@ impl ToSql for SubqueryBuilder {
 
     fn is_subquery(&self) -> bool {
         true
+    }
+}
+
+impl<T> ToSql for &T
+where
+    T: ToSql,
+{
+    #[inline(always)]
+    fn to_sql(&self) -> Result<String, EloquentError> {
+        (*self).to_sql()
     }
 }
 
